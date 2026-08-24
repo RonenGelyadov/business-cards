@@ -2,7 +2,7 @@
   "name": "business-cards",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "nodemon ."
@@ -11,6 +11,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "chalk": "^6.0.0",
+    "config": "^5.0.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "joi": "^18.2.5",
