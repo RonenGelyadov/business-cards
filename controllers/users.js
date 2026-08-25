@@ -3,6 +3,7 @@ import { model, Schema } from 'mongoose';
 import config from 'config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import guard from '../services/guard.js';
 
 const JWT_SECRET = config.get('JWT_SECRET');
 
@@ -42,7 +43,7 @@ const User = model('users', UserSchema);
 
 const router = Router();
 
-router.get('/', async (req, res) => {});
+router.get('/', guard, async (req, res) => {});
 
 router.post('/', async (req, res) => {
   const { name, phone, email, password, image, address, isBusiness } = req.body;
