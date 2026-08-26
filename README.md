@@ -2,6 +2,25 @@
 
 A RESTful API server for managing business cards, built with Node.js and Express. Users can register, create business cards, and manage them based on their role (regular user, business user, or admin).
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+```bash
+npm install
+```
+
+### Running the server
+
+```bash
+npm start
+```
+
 ## 🔐 Authentication
 
 Most endpoints require a JWT token sent in the request header. After logging in via `/users/login`, use the returned encrypted token for subsequent authorized requests.
@@ -43,3 +62,9 @@ Most endpoints require a JWT token sent in the request header. After logging in 
 ## ⚠️ Error Handling
 
 If a requested resource, route, or static file is not found, the server returns a `404` status with an appropriate error message/page.
+
+## 🛠️ Built With
+
+- Node.js
+- Express
+- JWT (JSON Web Tokens)

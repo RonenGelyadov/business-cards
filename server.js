@@ -29,13 +29,13 @@ server.use('/users', UsersRouter);
 server.use('/cards', CardsRouter);
 
 server.get('/', (req, res) => {
-  res.send({ message: 'Welcome to Business Cards' });
+  res.send({ message: 'Welcome to Business Cards. For more information: /info.txt' });
 });
 
 server.use((req, res) => {
   res.status(404).send({
     error: 'Not Found',
-    message: `The requested resource '${req.url}' was not found on this server. for more information: /README.md`,
+    message: `The requested resource '${req.url}' was not found on this server. For more information: /info.txt`,
   });
 });
 

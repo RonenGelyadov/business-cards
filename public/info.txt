@@ -1,0 +1,115 @@
+BCard API - Documentation
+==========================
+
+A RESTful API server for managing business cards, built with Node.js and Express.
+Users can register, create business cards, and manage them based on their role
+(regular user, business user, or admin).
+
+
+AUTHENTICATION
+--------------
+
+Most endpoints require a JWT token sent in the request header.
+After logging in via /users/login, use the returned encrypted token for
+subsequent authorized requests.
+
+Authorization levels:
+  - all                        no authentication required
+  - Registered user            any logged-in user
+  - Business user               a registered user with isBusiness: true
+  - Resource owner              only the user who created the resource
+  - admin                       admin users only
+
+
+USERS ENDPOINTS
+---------------
+
+1. POST    /users
+   Authorization: all
+   Action: Register user
+   Notice: Email must be unique
+   Return: Registered user
+
+2. POST    /users/login
+   Authorization: all
+   Action: Login
+   Return: Encrypted token
+
+3. GET     /users
+   Authorization: admin
+   Action: Get all users
+   Return: Array of users
+
+4. GET     /users/:id
+   Authorization: Registered user or admin
+   Action: Get user
+   Return: User
+
+5. PUT     /users/:id
+   Authorization: Registered user
+   Action: Edit user
+   Return: Updated user
+
+6. PATCH   /users/:id
+   Authorization: Registered user
+   Action: Change isBusiness status
+   Return: Updated user
+
+7. DELETE  /users/:id
+   Authorization: Registered user or admin
+   Action: Delete user
+   Return: Deleted user
+
+
+CARDS ENDPOINTS
+---------------
+
+1. GET     /cards
+   Authorization: all
+   Action: Get all cards
+   Return: Array of cards
+
+2. GET     /cards/my-cards
+   Authorization: Registered user
+   Action: Get user's cards
+   Return: Array of cards
+
+3. GET     /cards/:id
+   Authorization: all
+   Action: Get card
+   Return: Card
+
+4. POST    /cards
+   Authorization: Business user
+   Action: Create new card
+   Return: Card
+
+5. PUT     /cards/:id
+   Authorization: The user who created the card
+   Action: Edit card
+   Return: Card
+
+6. PATCH   /cards/:id
+   Authorization: Registered user
+   Action: Like card
+   Return: Card
+
+7. DELETE  /cards/:id
+   Authorization: The user who created the card, or admin
+   Action: Delete card
+   Return: Deleted card
+
+
+ERROR HANDLING
+--------------
+
+If a requested resource, route, or static file is not found, the server
+returns a 404 status with an appropriate error message.
+
+
+BUILT WITH
+----------
+
+Node.js
+Express
+JWT (JSON Web Tokens)
