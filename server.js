@@ -1,14 +1,9 @@
 import express from 'express';
-import { fileURLToPath } from 'url';
-import path from 'path';
 import config from 'config';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import UsersRouter from './routes/users.js';
 import CardsRouter from './routes/cards.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const PORT = config.get('PORT');
 const DB_URL = config.get('DATABASE.URL');
@@ -38,7 +33,10 @@ server.get('/', (req, res) => {
 });
 
 server.use((req, res) => {
-  res.status(404).sendFile(__dirname + '/public/404.html');
+  res.status(404).send({
+    error: 'Not Found',
+    message: `The requested resource '${req.url}' was not found on this server. for more information: /README.md`,
+  });
 });
 
 server.listen(PORT, () => {
