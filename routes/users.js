@@ -1,50 +1,16 @@
 import { Router } from 'express';
-import { model, Schema } from 'mongoose';
 import config from 'config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import guard from '../services/guard.js';
-import admin from '../services/admin.js';
+import User from '../models/User.js';
+import auth from '../middlewares/auth.js';
+import admin from '../middlewares/admin.js';
 
 const JWT_SECRET = config.get('JWT_SECRET');
 
-const NameSchema = new Schema({
-  first: String,
-  middle: String,
-  last: String,
-});
-
-const ImageSchema = new Schema({
-  url: String,
-  alt: String,
-});
-
-const AddressSchema = new Schema({
-  state: { type: String, default: 'not defined' },
-  country: String,
-  city: String,
-  street: String,
-  houseNumber: String,
-  zip: { type: Number, default: 0 },
-});
-
-const UserSchema = new Schema({
-  name: NameSchema,
-  phone: String,
-  email: String,
-  password: String,
-  image: ImageSchema,
-  address: AddressSchema,
-  isAdmin: { type: Boolean, default: false },
-  isBusiness: Boolean,
-  createdAt: { type: Date, default: Date.now },
-});
-
-const User = model('users', UserSchema);
-
 const router = Router();
 
-router.get('/', guard, admin, async (req, res) => {
+router.get('/', auth, admin, async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.status(200).send(users);
@@ -122,7 +88,7 @@ router.post('/login', async (req, res) => {
 
   const tokenData = {
     userId: foundUser._id,
-    fullName: `${foundUser.name.first} ${foundUser.name.last}`,
+    isBusiness: foundUser.isBusiness,
     isAdmin: foundUser.isAdmin,
   };
 
@@ -130,7 +96,7 @@ router.post('/login', async (req, res) => {
   res.status(200).send({ token });
 });
 
-router.get('/:id', guard, async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   const { id } = req.params;
   const { userId, isAdmin } = req.user;
 
@@ -156,12 +122,12 @@ router.get('/:id', guard, async (req, res) => {
   }
 });
 
-router.put('/:id', guard, async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const { id } = req.params;
   const { userId } = req.user;
 });
 
-router.patch('/:id', guard, async (req, res) => {
+router.patch('/:id', auth, async (req, res) => {
   const { id } = req.params;
   const { userId } = req.user;
   const { isBusiness } = req.body ?? {};
@@ -201,7 +167,7 @@ router.patch('/:id', guard, async (req, res) => {
   }
 });
 
-router.delete('/:id', guard, async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   const { id } = req.params;
   const { userId, isAdmin } = req.user;
 
