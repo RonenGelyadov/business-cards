@@ -6,7 +6,9 @@ import UsersRouter from './routes/users.js';
 import CardsRouter from './routes/cards.js';
 
 const PORT = config.get('PORT');
-const DB_URL = config.get('DATABASE.URL');
+const DB_URL = config.get(
+  config.get('MODE') === 'production' ? 'DATABASE.ATLAS_URL' : 'DATABASE.LOCAL_URL',
+);
 
 await mongoose.connect(DB_URL);
 console.log('mongodb connected');
@@ -29,7 +31,7 @@ server.use('/users', UsersRouter);
 server.use('/cards', CardsRouter);
 
 server.get('/', (req, res) => {
-  res.send({ message: 'Welcome to Business Cards. For more information: /info.txt' });
+  res.send({ message: 'Welcome to Business-Cards. For more information: /info.txt' });
 });
 
 server.use((req, res) => {

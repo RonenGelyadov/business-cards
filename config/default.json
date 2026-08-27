@@ -1,7 +1,9 @@
 {
+  "MODE": "development",
   "PORT": 3000,
   "DATABASE": {
-    "URL": "mongodb://127.0.0.1:27017/business-cards"
+    "LOCAL_URL": "mongodb://127.0.0.1:27017/business-cards",
+    "ATLAS_URL": "mongodb+srv://{Username}:<Password>@YourURL"
   },
   "JWT_SECRET": "MY_SECRET_KEY_6jv8f2dsjvsj9srtsf3h2se986ry2"
 }
