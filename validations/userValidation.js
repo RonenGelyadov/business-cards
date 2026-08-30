@@ -7,7 +7,7 @@ const nameSchema = Joi.object({
 });
 
 const imageSchema = Joi.object({
-  url: Joi.string().min(14).allow(''),
+  url: Joi.string().min(2).allow(''),
   alt: Joi.string().min(2).max(256).allow(''),
 });
 
@@ -16,7 +16,7 @@ const addressSchema = Joi.object({
   country: Joi.string().min(2).max(256).required(),
   city: Joi.string().min(2).max(256).required(),
   street: Joi.string().min(2).max(256).required(),
-  houseNumber: Joi.number().min(1).required(),
+  houseNumber: Joi.string().min(1).required(),
   zip: Joi.number().min(0),
 });
 
@@ -26,24 +26,25 @@ const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{7,20}$/;
 
 const registerSchema = Joi.object({
   name: nameSchema.required(),
-  isBusiness: Joi.boolean(),
   phone: Joi.string()
     .min(9)
     .max(11)
     .required()
     .pattern(/^0[2-9]\d(-)?\d{7}$/),
   email: Joi.string().min(5).required().email(),
-  password: Joi.string().min(7).max(20).required().pattern(passwordPattern).messages({
+  password: Joi.string().min(7).max(50).required().pattern(passwordPattern).messages({
     'string.pattern.base':
       'Password must be 7-20 characters and include an uppercase letter, a lowercase letter, a number and a special character.',
   }),
-  address: addressSchema.required(),
   image: imageSchema,
+  address: addressSchema.required(),
+  isBusiness: Joi.boolean(),
+  isAdmin: Joi.boolean(),
 });
 
 const loginSchema = Joi.object({
   email: Joi.string().min(5).required().email(),
-  password: Joi.string().min(7).max(20).required(),
+  password: Joi.string().min(7).max(50).required(),
 });
 
 // Same shape as registration, minus password/isBusiness which are changed

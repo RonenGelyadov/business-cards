@@ -28,7 +28,7 @@ const UserSchema = new Schema({
   image: ImageSchema,
   address: AddressSchema,
   isAdmin: { type: Boolean, default: false },
-  isBusiness: Boolean,
+  isBusiness: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 
