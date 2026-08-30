@@ -19,23 +19,15 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const addNewUser = async (req, res) => {
-  const { error, value } = registerSchema.validate(req.body);
-
-  if (error) {
-    return res.status(400).send({ error: error.details[0].message });
-  }
-
   try {
-    const foundUser = await User.findOne({ email: req.body.email });
+    const foundUser = await User.findOne({ email: req.validatedData.email });
 
     if (foundUser) {
       return res.status(409).send({ message: 'email already exists' });
     }
 
-    const user = new User(value);
-
+    const user = new User(req.validatedData);
     const newUser = await user.save();
-
     const { password, ...userWithoutPassword } = newUser._doc;
 
     res.status(200).send({
@@ -51,7 +43,7 @@ export const addNewUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body ?? {};
+  const { email, password } = req.validatedData;
 
   const foundUser = await User.findOne({ email });
 
@@ -111,20 +103,20 @@ export const editUser = async (req, res) => {
       .send({ message: 'You do not have permission to perform this action' });
   }
 
-  const { error, value } = editUserSchema.validate(req.body);
-
-  if (error) {
-    return res.status(400).send({ error: error.details[0].message });
-  }
-
   try {
-    const user = await User.findByIdAndUpdate(id, value);
+    const foundUser = await User.findByIdAndUpdate(id, req.validatedData);
 
-    if (!user) {
+    if (!foundUser) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    res.end();
+    const editedUser = await foundUser.save();
+    const { password, ...userWithoutPassword } = editedUser._doc;
+
+    res.status(200).send({
+      message: 'User updated successfully',
+      user: userWithoutPassword,
+    });
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
@@ -158,8 +150,7 @@ export const changeIsBusinessStatus = async (req, res) => {
     foundUser.isBusiness = isBusiness;
 
     const editedUser = await foundUser.save();
-
-    const { password: _, ...userWithoutPassword } = editedUser._doc;
+    const { password, ...userWithoutPassword } = editedUser._doc;
 
     res.status(200).send({
       message: 'User updated successfully',
