@@ -10,7 +10,7 @@ const addressSchema = Joi.object({
 });
 
 const imageSchema = Joi.object({
-  url: Joi.string().min(14).allow(''),
+  url: Joi.string().min(2).allow(''),
   alt: Joi.string().min(2).max(256).allow(''),
 });
 
@@ -24,9 +24,10 @@ const cardSchema = Joi.object({
     .required()
     .pattern(/^0[2-9]\d(-)?\d{7}$/),
   email: Joi.string().min(5).required().email(),
-  web: Joi.string().min(14).allow(''),
+  web: Joi.string().min(5).allow(''),
   image: imageSchema,
   address: addressSchema.required(),
+  bizNumber: Joi.number().min(1).required(),
 });
 
 export default cardSchema;

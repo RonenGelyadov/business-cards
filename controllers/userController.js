@@ -2,7 +2,6 @@ import config from 'config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import { editUserSchema, registerSchema } from '../validations/userValidation.js';
 
 const JWT_SECRET = config.get('JWT_SECRET');
 
@@ -13,7 +12,6 @@ export const getAllUsers = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
-      error: err.message,
     });
   }
 };
@@ -35,9 +33,8 @@ export const addNewUser = async (req, res) => {
       user: userWithoutPassword,
     });
   } catch (err) {
-    res.status(500).json({
+    res.status(500).send({
       message: 'An error occurred while processing your request',
-      error: err.message,
     });
   }
 };
@@ -45,26 +42,30 @@ export const addNewUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.validatedData;
 
-  const foundUser = await User.findOne({ email });
+  try {
+    const foundUser = await User.findOne({ email });
+    if (!foundUser) {
+      return res.status(401).send({ message: 'Invalid credentials' });
+    }
 
-  if (!foundUser) {
-    return res.status(401).send({ message: 'Invalid credentials' });
+    const passwordMatch = await bcrypt.compare(password, foundUser.password);
+    if (!passwordMatch) {
+      return res.status(401).send({ message: 'Invalid credentials' });
+    }
+
+    const tokenData = {
+      userId: foundUser._id,
+      isBusiness: foundUser.isBusiness,
+      isAdmin: foundUser.isAdmin,
+    };
+
+    const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '20m' });
+    res.status(200).send({ token });
+  } catch (err) {
+    res.status(500).send({
+      message: 'An error occurred while processing your request',
+    });
   }
-
-  const passwordMatch = await bcrypt.compare(password, foundUser.password);
-
-  if (!passwordMatch) {
-    return res.status(401).send({ message: 'Invalid credentials' });
-  }
-
-  const tokenData = {
-    userId: foundUser._id,
-    isBusiness: foundUser.isBusiness,
-    isAdmin: foundUser.isAdmin,
-  };
-
-  const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '20m' });
-  res.status(200).send({ token });
 };
 
 export const getUserById = async (req, res) => {
@@ -88,7 +89,6 @@ export const getUserById = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
-      error: err.message,
     });
   }
 };
@@ -104,14 +104,13 @@ export const editUser = async (req, res) => {
   }
 
   try {
-    const foundUser = await User.findByIdAndUpdate(id, req.validatedData);
+    const foundUser = await User.findByIdAndUpdate(id, req.validatedData, { new: true });
 
     if (!foundUser) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    const editedUser = await foundUser.save();
-    const { password, ...userWithoutPassword } = editedUser._doc;
+    const { password, ...userWithoutPassword } = foundUser._doc;
 
     res.status(200).send({
       message: 'User updated successfully',
@@ -120,7 +119,6 @@ export const editUser = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
-      error: err.message,
     });
   }
 };
@@ -159,7 +157,6 @@ export const changeIsBusinessStatus = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
-      error: err.message,
     });
   }
 };
@@ -188,7 +185,6 @@ export const deleteUser = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
-      error: err.message,
     });
   }
 };

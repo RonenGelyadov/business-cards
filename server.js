@@ -41,6 +41,22 @@ server.use((req, res) => {
   });
 });
 
+server.use((err, req, res, next) => {
+  console.log(err);
+  // רק אם זה 500 ומעלה
+  if (err.statusCode >= 500) {
+    console.error('Error:', err);
+
+    res.status(err.statusCode).send({
+      message: 'An error occurred while processing your request',
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+    });
+  } else {
+    // שגיאות אחרות - תנהל אותן בדרך אחרת
+    //next(err);
+  }
+});
+
 server.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });

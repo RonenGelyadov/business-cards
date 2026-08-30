@@ -16,12 +16,10 @@ const addressSchema = Joi.object({
   country: Joi.string().min(2).max(256).required(),
   city: Joi.string().min(2).max(256).required(),
   street: Joi.string().min(2).max(256).required(),
-  houseNumber: Joi.string().min(1).required(),
+  houseNumber: Joi.number().min(1).required(),
   zip: Joi.number().min(0),
 });
 
-// HackerU convention: 7-20 chars, at least one lowercase, one uppercase,
-// one digit and one special character (e.g. "Aa1234!").
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{7,20}$/;
 
 const registerSchema = Joi.object({
@@ -47,8 +45,6 @@ const loginSchema = Joi.object({
   password: Joi.string().min(7).max(50).required(),
 });
 
-// Same shape as registration, minus password/isBusiness which are changed
-// through their own dedicated endpoints (login and the PATCH toggle).
 const editUserSchema = Joi.object({
   name: nameSchema.required(),
   phone: Joi.string()
@@ -57,8 +53,9 @@ const editUserSchema = Joi.object({
     .required()
     .pattern(/^0[2-9]\d(-)?\d{7}$/),
   email: Joi.string().min(5).required().email(),
-  address: addressSchema.required(),
   image: imageSchema,
+  address: addressSchema.required(),
+  isBusiness: Joi.boolean(),
 });
 
 export { registerSchema, loginSchema, editUserSchema };

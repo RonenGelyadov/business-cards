@@ -16,14 +16,14 @@ const AddressSchema = new Schema({
   country: String,
   city: String,
   street: String,
-  houseNumber: String,
+  houseNumber: Number,
   zip: { type: Number, default: 0 },
 });
 
 const UserSchema = new Schema({
   name: NameSchema,
   phone: String,
-  email: String,
+  email: { type: String, unique: true },
   password: String,
   image: ImageSchema,
   address: AddressSchema,
