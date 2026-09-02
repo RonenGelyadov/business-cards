@@ -21,6 +21,12 @@ npm install
 npm start
 ```
 
+### Running the server in development
+
+```bash
+npm run dev
+```
+
 ## 🔐 Authentication
 
 Most endpoints require a JWT token sent in the request header. After logging in via `/users/login`, use the returned encrypted token for subsequent authorized requests.

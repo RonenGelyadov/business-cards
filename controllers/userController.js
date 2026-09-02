@@ -28,10 +28,7 @@ export const addNewUser = async (req, res) => {
     const newUser = await user.save();
     const { password, ...userWithoutPassword } = newUser._doc;
 
-    res.status(200).send({
-      message: 'User created successfully',
-      user: userWithoutPassword,
-    });
+    res.status(200).send(userWithoutPassword);
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
@@ -112,10 +109,7 @@ export const editUser = async (req, res) => {
 
     const { password, ...userWithoutPassword } = foundUser._doc;
 
-    res.status(200).send({
-      message: 'User updated successfully',
-      user: userWithoutPassword,
-    });
+    res.status(200).send(userWithoutPassword);
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
@@ -150,10 +144,7 @@ export const changeIsBusinessStatus = async (req, res) => {
     const editedUser = await foundUser.save();
     const { password, ...userWithoutPassword } = editedUser._doc;
 
-    res.status(200).send({
-      message: 'User updated successfully',
-      user: userWithoutPassword,
-    });
+    res.status(200).send(userWithoutPassword);
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
@@ -178,10 +169,7 @@ export const deleteUser = async (req, res) => {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    res.status(200).send({
-      message: 'User deleted successfully',
-      deletedUser,
-    });
+    res.status(200).send(deletedUser);
   } catch (err) {
     res.status(500).send({
       message: 'An error occurred while processing your request',
